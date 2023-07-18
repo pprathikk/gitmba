@@ -1,7 +1,0 @@
-services:
-  app:
-    image: web-app
-    command: python app.py
-    ports:
-      - 127.0.0.1:3000:3000
-    working_dir: /app
