@@ -1,22 +1,27 @@
+version: '3'
+
 services:
-  web:
-    build: app/aspnetapp
-    ports:
-      - 8080:80
-  db:
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: example_123
-    # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
-    image: mcr.microsoft.com/azure-sql-edge:1.0.4
-    # If you really want to use MS SQL Server, uncomment the following line
-    #image: mcr.microsoft.com/mssql/server
-    restart: always
-    healthcheck:
-        test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P example_123 -Q 'SELECT 1' || exit 1"]
-        interval: 10s
-        retries: 10
-        start_period: 10s
-        timeout: 3s     
-         
-       
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: secret
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: secret
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "8080:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: secret
+volumes:
+    db_data:
