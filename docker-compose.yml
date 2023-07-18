@@ -1,12 +1,7 @@
-version: "3.7"
-
 services:
-  docs:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: dev
+  app:
+    image: web-app
+    command: python app.py
     ports:
-      - 8000:8000
-    volumes:
-      - ./:/app
+      - 127.0.0.1:3000:3000
+    working_dir: /app
